@@ -1,0 +1,50 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+    strategy:
+      matrix:
+        elixir: ["1.17.3"]
+        otp: ["27.1.1"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+          build-flags: --all-warnings --warnings-as-errors
+
+      # Run if you have a database
+      - name: Run Migrations
+        run: mix ecto.migrate
+        # Run tests & migrations even if compilation failed (probably due to warnings)
+        # so that we give devs as much feedback as possible & save some time.
+        if: false
+
+      - name: Run Tests
+        run: mix coveralls.json --warnings-as-errors
+        if: always()
+
+      # Optional, but Codecov has a bot that will comment on your PR with per-file
+      # coverage deltas.
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: ./cover/excoveralls.json
