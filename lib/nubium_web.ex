@@ -43,7 +43,7 @@ defmodule NubiumWeb do
         layouts: [html: NubiumWeb.Layouts]
 
       import Plug.Conn
-      import NubiumWeb.Gettext
+      use Gettext, backend: NubiumWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -85,7 +85,7 @@ defmodule NubiumWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import NubiumWeb.CoreComponents
-      import NubiumWeb.Gettext
+      use Gettext, backend: NubiumWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

@@ -17,7 +17,7 @@ defmodule NubiumWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import NubiumWeb.Gettext
+  use Gettext, backend: NubiumWeb.Gettext
 
   @doc """
   Renders a modal.
